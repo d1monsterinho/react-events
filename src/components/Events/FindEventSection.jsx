@@ -1,4 +1,4 @@
-import {useRef, useState} from 'react';
+import {useState} from 'react';
 import {useQuery} from "@tanstack/react-query";
 import {fetchEvents} from "../../util/http.js";
 import LoadingIndicator from "../UI/LoadingIndicator.jsx";
