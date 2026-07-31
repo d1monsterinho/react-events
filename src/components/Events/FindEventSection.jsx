@@ -10,7 +10,7 @@ export default function FindEventSection() {
 
     const {data, isPending, isError, error} = useQuery({
         queryKey: ['events', `search-${searchValue}`],
-        queryFn: () => fetchEvents(searchValue),
+        queryFn: ({signal}) => fetchEvents({signal, searchValue}),
         staleTime: 1000 * 60 * 2,
     });
 
