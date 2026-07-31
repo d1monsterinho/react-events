@@ -56,7 +56,6 @@ export default function FindEventSection() {
                     <input
                         type="search"
                         placeholder="Search events"
-                        //ref={searchElement}
                         onChange={handleChange}
                     />
                     <button>Search</button>
