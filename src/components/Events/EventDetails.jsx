@@ -32,11 +32,16 @@ export default function EventDetails() {
         mutate({id: params.id});
     }
 
-    const formattedDate = new Date(event.date).toLocaleDateString('en-US', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-    })
+    let formattedDate;
+
+    if (event) {
+        formattedDate = new Date(event.date).toLocaleDateString('en-US', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+        });
+    }
+
 
     return (
         <>
