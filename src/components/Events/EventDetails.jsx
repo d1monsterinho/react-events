@@ -4,8 +4,11 @@ import Header from '../Header.jsx';
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {deleteEvent, fetchEventData, queryClient} from "../../util/http.js";
 import ErrorBlock from "../UI/ErrorBlock.jsx";
+import {useState} from "react";
+import Modal from "../UI/Modal.jsx";
 
 export default function EventDetails() {
+    const [isDeleting, setIsDeleting] = useState(false);
     const params = useParams();
     const navigate = useNavigate();
 
@@ -28,6 +31,14 @@ export default function EventDetails() {
         },
     });
 
+    function handleStartDeletion() {
+        setIsDeleting(true);
+    }
+
+    function handleStopDeletion() {
+        setIsDeleting(false);
+    }
+
     function handleDeleteClick() {
         mutate({id: params.id});
     }
@@ -42,9 +53,30 @@ export default function EventDetails() {
         });
     }
 
-
     return (
         <>
+            {isDeleting && (
+                <Modal onClose={handleStopDeletion}>
+                    <h2>Are you sure?</h2>
+                    <p>This event will be deleted</p>
+                    <div className="form-actions">
+                        {isDeletionPending && 'Deleting event...'}
+                        {!isDeletionPending && (
+                            <>
+                                <button className="button-text" onClick={handleStopDeletion}>Cancel</button>
+                                <button className="button" onClick={handleDeleteClick}>Delete</button>
+                            </>
+                        )}
+                    </div>
+
+                    {isDeletionError && (
+                        <ErrorBlock
+                            title="Failed to delete event."
+                            message={deletionError.info?.message || 'Error occurred while deleting event.'}
+                        />
+                    )}
+                </Modal>
+            )}
             <Outlet/>
             <Header>
                 <Link to="/events" className="nav-item">
@@ -61,13 +93,10 @@ export default function EventDetails() {
                     <>
                         <header>
                             <h1>{event.title}</h1>
-                            {isDeletionPending && 'Deleting event...'}
-                            {!isDeletionPending && (
-                                <nav>
-                                    <button onClick={handleDeleteClick}>Delete</button>
-                                    <Link to="edit">Edit</Link>
-                                </nav>
-                            )}
+                            <nav>
+                                <button onClick={handleStartDeletion}>Delete</button>
+                                <Link to="edit">Edit</Link>
+                            </nav>
                         </header>
                         <div id="event-details-content">
                             <img src={`http://localhost:3000/${event.image}`} alt="Event Image"/>
@@ -86,12 +115,6 @@ export default function EventDetails() {
                     <ErrorBlock
                         title="Failed to load event data."
                         message={error.info?.message || 'Error occurred while fetching event data.'}
-                    />
-                )}
-                {isDeletionError && (
-                    <ErrorBlock
-                        title="Failed to delete event."
-                        message={deletionError.info?.message || 'Error occurred while deleting event.'}
                     />
                 )}
             </article>
