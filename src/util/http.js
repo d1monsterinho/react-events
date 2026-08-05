@@ -84,10 +84,10 @@ export async function createNewEvent(event) {
     return createdEvent;
 }
 
-export async function editEvent({event}){
-    const response = await fetch(`${EVENTS_URL}/${event.id}`, {
+export async function editEvent({id, event}){
+    const response = await fetch(`${EVENTS_URL}/${id}`, {
         method: 'PUT',
-        body: JSON.stringify(event),
+        body: JSON.stringify({event}),
         headers: {
             'Content-Type': 'application/json',
         },
