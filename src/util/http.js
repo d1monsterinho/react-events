@@ -7,11 +7,19 @@ const EVENTS_URL = URL + EVENTS_URL_SEGMENT;
 
 export const queryClient = new QueryClient();
 
-export async function fetchEvents({signal, searchValue}) {
+export async function fetchEvents({signal, searchValue, max}) {
     let url = EVENTS_URL;
+
+    if (searchValue && max) {
+        url += `?search=${searchValue}&max=${max}`
+    }
 
     if (searchValue) {
         url += `?search=${searchValue}`;
+    }
+
+    if (max) {
+        url += `?max=${max}`;
     }
 
     const response = await fetch(url, {
