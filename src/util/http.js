@@ -1,9 +1,14 @@
 import {QueryClient} from "@tanstack/react-query";
 
+const URL = 'http://localhost:3000';
+const EVENTS_URL_SEGMENT = '/events';
+
+const EVENTS_URL = URL + EVENTS_URL_SEGMENT;
+
 export const queryClient = new QueryClient();
 
 export async function fetchEvents({signal, searchValue}) {
-    let url = 'http://localhost:3000/events';
+    let url = EVENTS_URL;
 
     if (searchValue) {
         url += `?search=${searchValue}`;
@@ -26,7 +31,7 @@ export async function fetchEvents({signal, searchValue}) {
 }
 
 export async function fetchEventImages({signal}) {
-    const response = await fetch('http://localhost:3000/events/images', {signal});
+    const response = await fetch(`${EVENTS_URL}/images`, {signal});
 
     if (!response.ok) {
         const error = new Error();
@@ -42,7 +47,7 @@ export async function fetchEventImages({signal}) {
 }
 
 export async function fetchEventData({signal, id}) {
-    const response = await fetch(`http://localhost:3000/events/${id}`, {signal});
+    const response = await fetch(`${EVENTS_URL}/${id}`, {signal});
 
     if (!response.ok) {
         const error = new Error();
@@ -58,7 +63,7 @@ export async function fetchEventData({signal, id}) {
 }
 
 export async function createNewEvent(event) {
-    const response = await fetch('http://localhost:3000/events', {
+    const response = await fetch(EVENTS_URL, {
         method: 'POST',
         body: JSON.stringify(event),
         headers: {
@@ -79,8 +84,30 @@ export async function createNewEvent(event) {
     return createdEvent;
 }
 
+export async function editEvent({id, event}){
+    const response = await fetch(`${EVENTS_URL}/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({event}),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+    if (!response.ok) {
+        const error = new Error();
+        error.status = response.status;
+        error.info = await response.json();
+
+        throw error;
+    }
+
+    const {editedEvent} = await response.json();
+
+    return editedEvent;
+}
+
 export async function deleteEvent({id}) {
-    const response = await fetch(`http://localhost:3000/events/${id}`, {
+    const response = await fetch(`${EVENTS_URL}/${id}`, {
         method: 'DELETE',
     });
 
